@@ -15,6 +15,11 @@ def load_unesco_data():
 
     return data_frame
 
+def get_all_unique_numbers():
+    df = load_unesco_data()
+    unique_numbers = df["unique_number"].dropna().tolist()
+    return unique_numbers
+
 def get_site_by_unique_number(unique_number):
     df = load_unesco_data()
 
@@ -27,9 +32,41 @@ def get_site_by_unique_number(unique_number):
 
     return result.iloc[0].to_dict()
 
+def get_coords_dict(unique_numbers):
+    df = load_unesco_data()
+
+    # Sélection des colonnes utiles
+    subset = df.loc[:, ["unique_number", "longitude", "latitude"]].copy()
+
+    # Conversion en valeurs numériques
+    subset["unique_number"] = pd.to_numeric(subset["unique_number"], errors="coerce") # coerce convertit les valeurs invalides en NaN
+    subset["longitude"] = pd.to_numeric(subset["longitude"], errors="coerce")
+    subset["latitude"]  = pd.to_numeric(subset["latitude"],  errors="coerce")
+
+    #suppression des lignes avec NaN et doublons
+    subset = (
+        subset.dropna(subset=["unique_number", "longitude", "latitude"])
+              .drop_duplicates(subset=["unique_number"])
+              .set_index("unique_number")
+    )
+
+    # Construction du dictionnaire
+    result = {}
+    for num in unique_numbers:
+        try:
+            key = float(num)
+        except Exception:
+            continue
+
+        if key in subset.index:
+            row = subset.loc[key]
+            result[int(key)] = (float(row["longitude"]), float(row["latitude"]))
+
+    return result
 
 if __name__ == "__main__":
-    site = get_site_by_unique_number(230)
-    if site:
-        for key, value in site.items():
-            print(f"{key}: {value}")
+    
+    numbers = get_all_unique_numbers()
+    nums = [230, 234, 999999]  # 999999 n'existe pas -> None
+    coords = get_coords_dict(nums)
+    print(coords)
