@@ -33,6 +33,10 @@ def get_site_by_unique_number(unique_number):
     return result.iloc[0].to_dict()
 
 def get_coords_dict(unique_numbers):
+    """
+    Prend en parametre une liste de unique number
+    Retourne un dictionnaire {unique_number: (longitude, latitude)}
+    """
     df = load_unesco_data()
 
     # Sélection des colonnes utiles
