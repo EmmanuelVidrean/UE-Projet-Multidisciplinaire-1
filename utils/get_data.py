@@ -68,9 +68,62 @@ def get_coords_dict(unique_numbers):
 
     return result
 
-if __name__ == "__main__":
-    
-    numbers = get_all_unique_numbers()
-    nums = [230, 234, 999999]  # 999999 n'existe pas -> None
-    coords = get_coords_dict(nums)
-    print(coords)
+def get_all_categories():
+    """
+    Retourne la liste de toutes les catégories
+    """
+    df = load_unesco_data()
+
+    # On récupère les catégories uniques
+    categories = (
+        df["category"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    return categories
+
+def get_all_states_name():
+    """
+    Retourne la liste de tous les pays
+    """
+    df = load_unesco_data()
+
+    # On garde uniquement les lignes où transboundary == 0
+    df_non_transboundary = df[df["transboundary"] == 0]
+
+    categories = (
+        df_non_transboundary["states_name_en"]
+        .dropna()           
+        .unique()           
+        .tolist()         
+    )
+
+    return categories
+
+def get_all_region_name():
+    """
+    Retourne la liste de tous les region
+    """
+    df = load_unesco_data()
+
+    # On garde uniquement les lignes où transboundary == 0
+    df_non_transboundary = df[df["transboundary"] == 0]
+
+    categories = (
+        df_non_transboundary["region_en"]
+        .dropna()           
+        .unique()           
+        .tolist()         
+    )
+
+    return categories
+
+if __name__ == "__main__": 
+    categories = get_all_categories()
+    print(categories)
+    all_states = get_all_states_name()
+    print(all_states)
+    all_region = get_all_region_name()
+    print(all_region)
