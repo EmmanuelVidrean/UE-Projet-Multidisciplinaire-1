@@ -120,10 +120,61 @@ def get_all_region_name():
 
     return categories
 
+def get_unique_numbers_by_category(category_name):
+    """
+    Retourne la liste des 'unique_number' correspondant à une catégorie donnée.
+    """
+    df = load_unesco_data()
+
+    # On filtre les lignes correspondant exactement à la catégorie donnée
+    filtered_df = df[df["category"] == category_name]
+
+    unique_numbers = (
+        filtered_df["unique_number"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    return unique_numbers
+
+def get_unique_numbers_by_state(state_name):
+    """
+    Retourne la liste des 'unique_number' correspondant au pays donnée.
+    """
+    df = load_unesco_data()
+
+    # On filtre les lignes correspondant exactement au pays donnée
+    filtered_df = df[df["states_name_en"] == state_name]
+
+    unique_numbers = (
+        filtered_df["unique_number"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    return unique_numbers
+
+def get_unique_numbers_by_region(region_name):
+    """
+    Retourne la liste des 'unique_number' correspondant au region donnée.
+    """
+    df = load_unesco_data()
+
+    # On filtre les lignes correspondant exactement au region donnée
+    filtered_df = df[df["region_en"] == region_name]
+
+    unique_numbers = (
+        filtered_df["unique_number"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    return unique_numbers
+
 if __name__ == "__main__": 
-    categories = get_all_categories()
-    print(categories)
-    all_states = get_all_states_name()
-    print(all_states)
-    all_region = get_all_region_name()
-    print(all_region)
+    cultural_sites = get_unique_numbers_by_region("Africa")
+    print(f"Nombre de sites 'Cultural' : {len(cultural_sites)}")
+    print(cultural_sites[:10])
