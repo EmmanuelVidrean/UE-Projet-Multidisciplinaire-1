@@ -15,8 +15,21 @@ def load_unesco_data():
 
     return data_frame
 
+def get_site_by_unique_number(unique_number):
+    df = load_unesco_data()
+
+    # Filtrer les lignes correspondant à ce numéro unique
+    result = df[df["unique_number"] == unique_number]
+
+    if result.empty:
+        print(f"Aucun site trouvé avec unique_number = {unique_number}")
+        return None
+
+    return result.iloc[0].to_dict()
+
 
 if __name__ == "__main__":
-    iris_df = load_unesco_data()
-    print(iris_df.head())
-    print("\nColonnes disponibles :", iris_df.columns.tolist())
+    site = get_site_by_unique_number(230)
+    if site:
+        for key, value in site.items():
+            print(f"{key}: {value}")
