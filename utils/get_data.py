@@ -146,6 +146,23 @@ def get_all_udnp_codes():
     # On renvoie une liste triée
     return sorted(codes_set)
 
+def get_udnp_code_by_state(state_name):
+    """
+    Retourne le code UDNP exact d'un pays donné.
+    Si le pays existe pas return None
+    """
+    df = load_unesco_data()
+    filtered = df[df["states_name_en"] == state_name]
+
+    if filtered.empty:
+        return None
+
+    code = filtered["udnp_code"].dropna().unique() # on récupère les codes UDNP uniques non nuls
+
+    if len(code) == 0:
+        return None
+
+    return code[0]
 
 def get_unique_numbers_by_category(category_name):
     """
@@ -201,6 +218,3 @@ def get_unique_numbers_by_region(region_name):
 
     return unique_numbers
 
-
-if __name__ == "__main__":
-    print(get_all_udnp_codes())
