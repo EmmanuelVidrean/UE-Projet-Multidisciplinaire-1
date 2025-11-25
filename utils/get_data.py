@@ -16,11 +16,18 @@ def load_unesco_data():
     return data_frame
 
 def get_all_unique_numbers():
+    """
+    Retourne la liste de tous les 'unique_number' présents dans le dataset
+    """
     df = load_unesco_data()
     unique_numbers = df["unique_number"].dropna().tolist()
     return unique_numbers
 
 def get_site_by_unique_number(unique_number):
+    """
+    Prend en parametre un unique number
+    Retourne un dictionnaire représentant le site correspondant
+    """
     df = load_unesco_data()
 
     # Filtrer les lignes correspondant à ce numéro unique
@@ -173,8 +180,3 @@ def get_unique_numbers_by_region(region_name):
     )
 
     return unique_numbers
-
-if __name__ == "__main__": 
-    cultural_sites = get_unique_numbers_by_region("Africa")
-    print(f"Nombre de sites 'Cultural' : {len(cultural_sites)}")
-    print(cultural_sites[:10])
