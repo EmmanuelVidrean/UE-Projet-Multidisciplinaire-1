@@ -26,7 +26,7 @@ def get_all_unique_numbers():
 def get_site_by_unique_number(unique_number):
     """
     Prend en parametre un unique number
-    Retourne un dictionnaire représentant le site correspondant
+    Retourne un dictionnaire contenant les infos sur le site correspondant
     """
     df = load_unesco_data()
 
@@ -127,9 +127,29 @@ def get_all_region_name():
 
     return categories
 
+def get_all_udnp_codes():
+    """
+    Retourne la liste de tous les codes UDNP distincts du dataset.
+    Gère aussi les entrées contenant plusieurs codes séparés par des virgules.
+    """
+    df = load_unesco_data()
+    raw_codes = df["udnp_code"].dropna() # On récupère la colonne, enlevant les valeurs NaN
+    codes_set = set() # pour éviter les doublons
+
+    for value in raw_codes:
+        parts = value.split(",")   # on fait un split car certaines valeur de la colonne contiennent plusieurs codes séparés par des virgules
+        for code in parts:
+            code = code.strip()
+            if code:              # on ignore les chaînes vides
+                codes_set.add(code)
+
+    # On renvoie une liste triée
+    return sorted(codes_set)
+
+
 def get_unique_numbers_by_category(category_name):
     """
-    Retourne la liste des 'unique_number' correspondant à une catégorie donnée.
+    Retourne la liste des 'unique_number' correspondant à une catégorie donnée. (ex: "Cultural", "Natural", "Mixed")
     """
     df = load_unesco_data()
 
@@ -180,3 +200,7 @@ def get_unique_numbers_by_region(region_name):
     )
 
     return unique_numbers
+
+
+if __name__ == "__main__":
+    print(get_all_udnp_codes())
