@@ -119,6 +119,14 @@ def get_coords_dict(unique_numbers):
 def get_all_categories():
     """
     Retourne la liste de toutes les catégories
+
+    >>> categories = get_all_categories()
+    >>> isinstance(categories, list)
+    True
+    >>> len(categories) > 0               # le dataset contient forcément des catégories
+    True
+    >>> all(isinstance(s, str) for s in categories)  
+    True
     """
     df = load_unesco_data()
 
@@ -135,6 +143,14 @@ def get_all_categories():
 def get_all_states_name():
     """
     Retourne la liste de tous les pays
+
+    >>> states = get_all_states_name()
+    >>> isinstance(states, list)
+    True
+    >>> len(states) > 0               # le dataset contient forcément des pays
+    True
+    >>> all(isinstance(s, str) for s in states)  
+    True
     """
     df = load_unesco_data()
 
@@ -153,6 +169,14 @@ def get_all_states_name():
 def get_all_region_name():
     """
     Retourne la liste de tous les region
+
+    >>> region = get_all_region_name()
+    >>> isinstance(region, list)
+    True
+    >>> len(region) > 0               # le dataset contient forcément des régions
+    True
+    >>> all(isinstance(s, str) for s in region)  
+    True
     """
     df = load_unesco_data()
 
