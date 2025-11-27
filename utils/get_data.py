@@ -1,10 +1,21 @@
 import os
 import pandas as pd
 
+# commande pour tester cette fonction:
+# python -m doctest -v utils/get_data.py
+
 def load_unesco_data():
     """
     Charge le fichier CSV
     Retourne un DataFrame
+
+    >>> df = load_unesco_data()
+    >>> type(df).__name__
+    'DataFrame'
+    >>> "unique_number" in df.columns
+    True
+    >>> len(df) > 0   # le fichier ne doit pas être vide
+    True
     """
     # Récupération du csv à partir de l'arborecence du projet
     base_dir = os.path.dirname(os.path.dirname(__file__))
@@ -18,6 +29,14 @@ def load_unesco_data():
 def get_all_unique_numbers():
     """
     Retourne la liste de tous les 'unique_number' présents dans le dataset
+
+    >>> unique_numbers = get_all_unique_numbers()
+    >>> isinstance(unique_numbers, list)
+    True
+    >>> len(unique_numbers) > 0
+    True
+    >>> all(isinstance(num, (int, float)) for num in unique_numbers)
+    True
     """
     df = load_unesco_data()
     unique_numbers = df["unique_number"].dropna().tolist()
@@ -27,6 +46,15 @@ def get_site_by_unique_number(unique_number):
     """
     Prend en parametre un unique number
     Retourne un dictionnaire contenant les infos sur le site correspondant
+
+    >>> allNums = get_all_unique_numbers()
+    >>> site = get_site_by_unique_number(allNums[0])
+    >>> isinstance(site, dict)
+    True
+    >>> site is not None
+    True
+    >>> get_site_by_unique_number(-111111) is None
+    True
     """
     df = load_unesco_data()
 
@@ -34,7 +62,6 @@ def get_site_by_unique_number(unique_number):
     result = df[df["unique_number"] == unique_number]
 
     if result.empty:
-        print(f"Aucun site trouvé avec unique_number = {unique_number}")
         return None
 
     return result.iloc[0].to_dict()
@@ -43,6 +70,20 @@ def get_coords_dict(unique_numbers):
     """
     Prend en parametre une liste de unique number
     Retourne un dictionnaire {unique_number: (longitude, latitude)}
+
+    >>> nums = get_all_unique_numbers()
+    >>> coords = get_coords_dict(nums[:3])  # on teste sur 3 IDs valides
+    >>> isinstance(coords, dict)
+    True
+    >>> len(coords) > 0
+    True
+    >>> all(isinstance(v, tuple) and len(v) == 2 for v in coords.values())
+    True
+
+    # Cas : un ID invalide ne casse pas la fonction
+    >>> coords2 = get_coords_dict([999999999])
+    >>> coords2 == {}     # aucun résultat
+    True
     """
     df = load_unesco_data()
 
@@ -78,6 +119,14 @@ def get_coords_dict(unique_numbers):
 def get_all_categories():
     """
     Retourne la liste de toutes les catégories
+
+    >>> categories = get_all_categories()
+    >>> isinstance(categories, list)
+    True
+    >>> len(categories) > 0               # le dataset contient forcément des catégories
+    True
+    >>> all(isinstance(s, str) for s in categories)  
+    True
     """
     df = load_unesco_data()
 
@@ -94,6 +143,14 @@ def get_all_categories():
 def get_all_states_name():
     """
     Retourne la liste de tous les pays
+
+    >>> states = get_all_states_name()
+    >>> isinstance(states, list)
+    True
+    >>> len(states) > 0               # le dataset contient forcément des pays
+    True
+    >>> all(isinstance(s, str) for s in states)  
+    True
     """
     df = load_unesco_data()
 
@@ -112,6 +169,14 @@ def get_all_states_name():
 def get_all_region_name():
     """
     Retourne la liste de tous les region
+
+    >>> region = get_all_region_name()
+    >>> isinstance(region, list)
+    True
+    >>> len(region) > 0               # le dataset contient forcément des régions
+    True
+    >>> all(isinstance(s, str) for s in region)  
+    True
     """
     df = load_unesco_data()
 
@@ -131,6 +196,14 @@ def get_all_udnp_codes():
     """
     Retourne la liste de tous les codes UDNP distincts du dataset.
     Gère aussi les entrées contenant plusieurs codes séparés par des virgules.
+    
+    >>> codes = get_all_udnp_codes()
+    >>> isinstance(codes, list)
+    True
+    >>> len(codes) > 0
+    True
+    >>> all(isinstance(c, str) for c in codes) 
+    True
     """
     df = load_unesco_data()
     raw_codes = df["udnp_code"].dropna() # On récupère la colonne, enlevant les valeurs NaN
@@ -150,6 +223,15 @@ def get_udnp_code_by_state(state_name):
     """
     Retourne le code UDNP exact d'un pays donné.
     Si le pays existe pas return None
+
+    >>> states = get_all_states_name()
+    >>> code = get_udnp_code_by_state(states[0])
+    >>> code is not None
+    True
+    >>> isinstance(code, str)
+    True
+    >>> get_udnp_code_by_state("Listembourg") is None
+    True
     """
     df = load_unesco_data()
     filtered = df[df["states_name_en"] == state_name]
@@ -167,6 +249,16 @@ def get_udnp_code_by_state(state_name):
 def get_unique_numbers_by_category(category_name):
     """
     Retourne la liste des 'unique_number' correspondant à une catégorie donnée. (ex: "Cultural", "Natural", "Mixed")
+    
+    >>> cats = get_all_categories()
+    >>> nums = get_unique_numbers_by_category(cats[0])
+    >>> isinstance(nums, list)
+    True
+    >>> len(nums) > 0
+    True
+
+    >>> get_unique_numbers_by_category("EricZemmour")
+    []
     """
     df = load_unesco_data()
 
@@ -185,6 +277,15 @@ def get_unique_numbers_by_category(category_name):
 def get_unique_numbers_by_state(state_name):
     """
     Retourne la liste des 'unique_number' correspondant au pays donnée.
+
+    >>> states = get_all_states_name()
+    >>> nums = get_unique_numbers_by_state(states[0])
+    >>> isinstance(nums, list)
+    True
+    >>> len(nums) > 0
+    True
+    >>> get_unique_numbers_by_state("Listembourg")
+    []
     """
     df = load_unesco_data()
 
@@ -203,6 +304,16 @@ def get_unique_numbers_by_state(state_name):
 def get_unique_numbers_by_region(region_name):
     """
     Retourne la liste des 'unique_number' correspondant au region donnée.
+
+    >>> regions = get_all_region_name()
+    >>> nums = get_unique_numbers_by_region(regions[0])
+    >>> isinstance(nums, list)
+    True
+    >>> len(nums) > 0
+    True
+
+    >>> get_unique_numbers_by_region("Atlantide")
+    []
     """
     df = load_unesco_data()
 
