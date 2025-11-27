@@ -1,10 +1,21 @@
 import os
 import pandas as pd
 
+# commande pour tester cette fonction:
+# python -m doctest -v utils/get_data.py
+
 def load_unesco_data():
     """
     Charge le fichier CSV
     Retourne un DataFrame
+
+    >>> df = load_unesco_data()
+    >>> type(df).__name__
+    'DataFrame'
+    >>> "unique_number" in df.columns
+    True
+    >>> len(df) > 0   # le fichier ne doit pas être vide
+    True
     """
     # Récupération du csv à partir de l'arborecence du projet
     base_dir = os.path.dirname(os.path.dirname(__file__))
