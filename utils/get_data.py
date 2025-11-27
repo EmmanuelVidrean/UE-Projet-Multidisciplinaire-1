@@ -53,7 +53,7 @@ def get_site_by_unique_number(unique_number):
     True
     >>> site is not None
     True
-    >>> get_site_by_unique_number(-1) is None
+    >>> get_site_by_unique_number(-111111) is None
     True
     """
     df = load_unesco_data()
@@ -62,7 +62,6 @@ def get_site_by_unique_number(unique_number):
     result = df[df["unique_number"] == unique_number]
 
     if result.empty:
-        print(f"Aucun site trouvé avec unique_number = {unique_number}")
         return None
 
     return result.iloc[0].to_dict()
