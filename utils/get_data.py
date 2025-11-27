@@ -250,16 +250,15 @@ def get_unique_numbers_by_category(category_name):
     """
     Retourne la liste des 'unique_number' correspondant à une catégorie donnée. (ex: "Cultural", "Natural", "Mixed")
     
-    >>> states = get_all_states_name()
-    >>> code = get_udnp_code_by_state(states[0])   # un pays valide
-    >>> code is not None
+    >>> cats = get_all_categories()
+    >>> nums = get_unique_numbers_by_category(cats[0])
+    >>> isinstance(nums, list)
     True
-    >>> isinstance(code, str)
+    >>> len(nums) > 0
     True
 
-    # Un pays inexistant doit retourner None
-    >>> get_udnp_code_by_state("UnknownCountry123") is None
-    True
+    >>> get_unique_numbers_by_category("EricZemmour")
+    []
     """
     df = load_unesco_data()
 
