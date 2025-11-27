@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 # commande pour tester cette fonction:
-# python -m doctest -v utils/get_data.py
+# python -m doctest -v src/utils/get_data.py
 
 def load_unesco_data():
     """
@@ -19,7 +19,7 @@ def load_unesco_data():
     """
     # Récupération du csv à partir de l'arborecence du projet
     base_dir = os.path.dirname(os.path.dirname(__file__))
-    data_path = os.path.join(base_dir, "data", "whc-sites-2019 - whc-sites-2019.csv")
+    data_path = os.path.join(base_dir, "data","raw", "whc-sites-2019 - whc-sites-2019.csv")
 
     # Lecture du fichier CSV avec pandas
     data_frame = pd.read_csv(data_path)
@@ -328,4 +328,3 @@ def get_unique_numbers_by_region(region_name):
     )
 
     return unique_numbers
-
