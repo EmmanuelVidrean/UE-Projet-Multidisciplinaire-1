@@ -1,55 +1,46 @@
-#
-# Imports
-#
-import plotly.express as px
-from dash import Dash, dcc, html
+from dash import Dash, html, dcc, Input, Output
+import src.components.navbar as navbar_module
+import src.components.footer as footer_module
+from src.pages.home import layout as home_layout
 
-#
-# Data
-#
-year = 2002
-gapminder = px.data.gapminder()
-years = gapminder["year"].unique()
-data = {year: gapminder.query("year == @year") for year in years}
-
-#
-# Main
-#
-if __name__ == '__main__':
-    app = Dash(__name__)
-
-    fig = px.scatter(
-        data[year],
-        x="gdpPercap",
-        y="lifeExp",
-        color="continent",
-        size="pop",
-        hover_name="country",
-        title=f"Life Expectancy vs GDP per Capita ({year})"
+def dataviz_layout():
+    """Page Data visualization (placeholder pour l’instant)."""
+    return html.Div(
+        children=[
+            html.H1("Data visualization"),
+            html.P(
+                "Ici, tu ajouteras plus tard les cartes, tableaux et "
+                "graphiques liés aux données UNESCO."
+            ),
+        ],
     )
 
-    app.layout = html.Div([
-        html.H1(
-            children=f'Life expectancy vs GDP per capita ({year})',
-            style={'textAlign': 'center', 'color': '#0078D7'}
-        ),
+app = Dash(__name__, suppress_callback_exceptions=True) #dataviz n'existe pas encore et pour pas crash
 
-        dcc.Graph(
-            id='graph1',
-            figure=fig
-        ),
+def serve_layout():
+    """Layout global : navbar + contenu + footer."""
+    return html.Div(
+        children=[
+            dcc.Location(id="url"),
+            navbar_module.navbar(),
+            html.Div(
+                id="page-content",
+            ),
+            footer_module.footer(),
+        ]
+    )
 
-        html.Div(
-            children=f"""
-            The graph above shows the relationship between life expectancy and GDP per capita 
-            for the year {year}. Each continent has its own color, and bubble size 
-            is proportional to the country's population.
-            Mouse over the points for details.
-            """
-        ),
-    ])
+app.layout = serve_layout
 
-    #
-    # RUN APP
-    #
-    app.run(debug=False)
+@app.callback(
+    Output("page-content", "children"),
+    Input("url", "pathname"),
+)
+def display_page(pathname: str):
+    if pathname == "/dataviz":
+        return dataviz_layout()
+    # par défaut : home
+    return home_layout()
+
+if __name__ == "__main__":
+    app.run(debug=True)

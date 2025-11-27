@@ -1,5 +1,3 @@
-# src/pages/home.py
-
 from dash import html
 
 def layout():
