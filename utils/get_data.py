@@ -196,6 +196,14 @@ def get_all_udnp_codes():
     """
     Retourne la liste de tous les codes UDNP distincts du dataset.
     Gère aussi les entrées contenant plusieurs codes séparés par des virgules.
+    
+    >>> codes = get_all_udnp_codes()
+    >>> isinstance(codes, list)
+    True
+    >>> len(codes) > 0
+    True
+    >>> all(isinstance(c, str) for c in codes) 
+    True
     """
     df = load_unesco_data()
     raw_codes = df["udnp_code"].dropna() # On récupère la colonne, enlevant les valeurs NaN
@@ -215,6 +223,15 @@ def get_udnp_code_by_state(state_name):
     """
     Retourne le code UDNP exact d'un pays donné.
     Si le pays existe pas return None
+
+    >>> states = get_all_states_name()
+    >>> code = get_udnp_code_by_state(states[0])
+    >>> code is not None
+    True
+    >>> isinstance(code, str)
+    True
+    >>> get_udnp_code_by_state("Listembourg") is None
+    True
     """
     df = load_unesco_data()
     filtered = df[df["states_name_en"] == state_name]
@@ -232,6 +249,17 @@ def get_udnp_code_by_state(state_name):
 def get_unique_numbers_by_category(category_name):
     """
     Retourne la liste des 'unique_number' correspondant à une catégorie donnée. (ex: "Cultural", "Natural", "Mixed")
+    
+    >>> states = get_all_states_name()
+    >>> code = get_udnp_code_by_state(states[0])   # un pays valide
+    >>> code is not None
+    True
+    >>> isinstance(code, str)
+    True
+
+    # Un pays inexistant doit retourner None
+    >>> get_udnp_code_by_state("UnknownCountry123") is None
+    True
     """
     df = load_unesco_data()
 
