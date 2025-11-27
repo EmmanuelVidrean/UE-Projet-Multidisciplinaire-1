@@ -70,6 +70,20 @@ def get_coords_dict(unique_numbers):
     """
     Prend en parametre une liste de unique number
     Retourne un dictionnaire {unique_number: (longitude, latitude)}
+
+    >>> nums = get_all_unique_numbers()
+    >>> coords = get_coords_dict(nums[:3])  # on teste sur 3 IDs valides
+    >>> isinstance(coords, dict)
+    True
+    >>> len(coords) > 0
+    True
+    >>> all(isinstance(v, tuple) and len(v) == 2 for v in coords.values())
+    True
+
+    # Cas : un ID invalide ne casse pas la fonction
+    >>> coords2 = get_coords_dict([999999999])
+    >>> coords2 == {}     # aucun résultat
+    True
     """
     df = load_unesco_data()
 
