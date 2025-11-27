@@ -29,6 +29,14 @@ def load_unesco_data():
 def get_all_unique_numbers():
     """
     Retourne la liste de tous les 'unique_number' présents dans le dataset
+
+    >>> unique_numbers = get_all_unique_numbers()
+    >>> isinstance(unique_numbers, list)
+    True
+    >>> len(unique_numbers) > 0
+    True
+    >>> all(isinstance(num, (int, float)) for num in unique_numbers)
+    True
     """
     df = load_unesco_data()
     unique_numbers = df["unique_number"].dropna().tolist()
