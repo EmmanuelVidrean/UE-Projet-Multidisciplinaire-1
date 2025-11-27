@@ -277,6 +277,15 @@ def get_unique_numbers_by_category(category_name):
 def get_unique_numbers_by_state(state_name):
     """
     Retourne la liste des 'unique_number' correspondant au pays donnée.
+
+    >>> states = get_all_states_name()
+    >>> nums = get_unique_numbers_by_state(states[0])
+    >>> isinstance(nums, list)
+    True
+    >>> len(nums) > 0
+    True
+    >>> get_unique_numbers_by_state("Listembourg")
+    []
     """
     df = load_unesco_data()
 
@@ -295,6 +304,16 @@ def get_unique_numbers_by_state(state_name):
 def get_unique_numbers_by_region(region_name):
     """
     Retourne la liste des 'unique_number' correspondant au region donnée.
+
+    >>> regions = get_all_region_name()
+    >>> nums = get_unique_numbers_by_region(regions[0])
+    >>> isinstance(nums, list)
+    True
+    >>> len(nums) > 0
+    True
+
+    >>> get_unique_numbers_by_region("Atlantide")
+    []
     """
     df = load_unesco_data()
 
