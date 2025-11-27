@@ -6,7 +6,7 @@ import pandas as pd
 
 def load_unesco_data():
     """
-    Charge le fichier CSV
+    Charge le fichier CSV nettoyé
     Retourne un DataFrame
 
     >>> df = load_unesco_data()
@@ -18,8 +18,8 @@ def load_unesco_data():
     True
     """
     # Récupération du csv à partir de l'arborecence du projet
-    base_dir = os.path.dirname(os.path.dirname(__file__))
-    data_path = os.path.join(base_dir, "data","raw", "whc-sites-2019 - whc-sites-2019.csv")
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    data_path = os.path.join(base_dir, "data", "cleaned", "cleaned_data.csv")
 
     # Lecture du fichier CSV avec pandas
     data_frame = pd.read_csv(data_path)
