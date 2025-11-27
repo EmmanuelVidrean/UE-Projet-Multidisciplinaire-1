@@ -46,6 +46,15 @@ def get_site_by_unique_number(unique_number):
     """
     Prend en parametre un unique number
     Retourne un dictionnaire contenant les infos sur le site correspondant
+
+    >>> allNums = get_all_unique_numbers()
+    >>> site = get_site_by_unique_number(allNums[0])
+    >>> isinstance(site, dict)
+    True
+    >>> site is not None
+    True
+    >>> get_site_by_unique_number(-1) is None
+    True
     """
     df = load_unesco_data()
 
