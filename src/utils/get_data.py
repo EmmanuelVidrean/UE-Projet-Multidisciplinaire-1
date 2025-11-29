@@ -328,3 +328,165 @@ def get_unique_numbers_by_region(region_name):
     )
 
     return unique_numbers
+
+def get_unique_numbers_by_date_inscribed(year):
+    """
+    Retourne la liste des 'unique_number' correspondant à une année d'inscription donnée.
+
+    >>> nums = get_unique_numbers_by_date_inscribed(2000)
+    >>> isinstance(nums, list)
+    True
+
+    >>> nums_no_result = get_unique_numbers_by_date_inscribed(1800)  # année vide
+    >>> nums_no_result == []
+    True
+    """
+    df = load_unesco_data()
+
+    # On filtre les lignes correspondant exactement à l'année donnée
+    filtered_df = df[df["date_inscribed"] == year]
+
+    unique_numbers = (
+        filtered_df["unique_number"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    return unique_numbers
+
+def get_unique_numbers_between_years(start_year, end_year):
+    """
+    Retourne la liste des 'unique_number' correspondant aux années d'inscription
+    entre start_year et end_year inclus.
+
+    >>> nums = get_unique_numbers_between_years(1990, 2000)
+    >>> isinstance(nums, list)
+    True
+
+    # intervalle vide (start > end) -> liste vide
+    >>> get_unique_numbers_between_years(2000, 1990)
+    []
+
+    # période vide
+    >>> res = get_unique_numbers_between_years(1800, 1850)
+    >>> isinstance(res, list)
+    True
+    """
+    df = load_unesco_data()
+
+    # Vérification que start_year est inférieur ou égal à end_year
+    if start_year > end_year:
+        return []
+
+    # On filtre les lignes correspondant aux années dans l'intervalle donné
+    filtered_df = df[
+        (df["date_inscribed"] >= start_year)
+        & (df["date_inscribed"] <= end_year)
+    ]
+
+    unique_numbers = (
+        filtered_df["unique_number"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    return unique_numbers
+
+def get_unique_numbers_by_name_substring(substring):
+    """
+    Retourne la liste des 'unique_number' correspondant aux sites dont le nom
+    contient la sous-chaîne donnée.
+
+    >>> nums = get_unique_numbers_by_name_substring("tipasa")
+    >>> isinstance(nums, list)
+    True
+
+    >>> nums_no_result = get_unique_numbers_by_name_substring("listembourg")  # sous-chaîne vide
+    >>> nums_no_result == []
+    True
+    """
+    df = load_unesco_data()
+
+    # On filtre les lignes dont le nom contient la sous-chaîne donnée (insensible à la casse)
+    filtered_df = df[df["name_en"].str.contains(substring, case=False, na=False)]
+
+    unique_numbers = (
+        filtered_df["unique_number"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    return unique_numbers
+
+
+def intersection(old_set, new_set):
+    """
+    Retourne l'intersection entre deux ensembles.
+    Si old_set est vide -> retourne new_set
+    Si new_set est vide -> retourne old_set
+    """
+
+    # Cas d'initialisation : pas encore de données
+    if old_set is None or len(old_set) == 0:
+        return new_set
+
+    if new_set is None or len(new_set) == 0:
+        return old_set
+
+    return old_set & new_set
+
+def search_unique_numbers(
+    substring=None,
+    category=None,
+    region=None,
+    state=None,
+    year=None,
+    year_range=None,
+):
+    """
+    Recherche avancée de sites UNESCO en combinant plusieurs critères.
+    Intersection progressive entre chaque filtre.
+    """
+
+    final_set = None
+
+    # 1) substring 
+    if substring is not None:
+        new_set = set(get_unique_numbers_by_name_substring(substring))
+        final_set = intersection(final_set, new_set)
+
+    # 2) catégorie 
+    if category is not None:
+        new_set = set(get_unique_numbers_by_category(category))
+        final_set = intersection(final_set, new_set)
+
+    # 3) région 
+    if region is not None:
+        new_set = set(get_unique_numbers_by_region(region))
+        final_set = intersection(final_set, new_set)
+
+    # 4) pays 
+    if state is not None:
+        new_set = set(get_unique_numbers_by_state(state))
+        final_set = intersection(final_set, new_set)
+
+    # 5) année exacte 
+    if year is not None:
+        new_set = set(get_unique_numbers_by_date_inscribed(year))
+        final_set = intersection(final_set, new_set)
+
+    # 6) intervalle d'années 
+    if year_range is not None:
+        start, end = year_range
+        new_set = set(get_unique_numbers_between_years(start, end))
+        final_set = intersection(final_set, new_set)
+
+    # Aucun filtre → renvoie tout
+    if final_set is None:
+        return sorted(get_all_unique_numbers())
+
+    return sorted(final_set).toList()
+
