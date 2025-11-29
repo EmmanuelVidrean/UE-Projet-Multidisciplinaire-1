@@ -393,3 +393,34 @@ def get_unique_numbers_between_years(start_year, end_year):
     )
 
     return unique_numbers
+
+def get_unique_numbers_by_name_substring(substring):
+    """
+    Retourne la liste des 'unique_number' correspondant aux sites dont le nom
+    contient la sous-chaîne donnée.
+
+    >>> nums = get_unique_numbers_by_name_substring("tipasa")
+    >>> isinstance(nums, list)
+    True
+
+    >>> nums_no_result = get_unique_numbers_by_name_substring("listembourg")  # sous-chaîne vide
+    >>> nums_no_result == []
+    True
+    """
+    df = load_unesco_data()
+
+    # On filtre les lignes dont le nom contient la sous-chaîne donnée (insensible à la casse)
+    filtered_df = df[df["name_en"].str.contains(substring, case=False, na=False)]
+
+    unique_numbers = (
+        filtered_df["unique_number"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    return unique_numbers
+
+if __name__ == "__main__":
+    tipasa_sub = get_unique_numbers_by_name_substring("tipasa")
+    print(tipasa_sub)
