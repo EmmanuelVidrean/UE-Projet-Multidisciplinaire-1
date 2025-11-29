@@ -328,3 +328,68 @@ def get_unique_numbers_by_region(region_name):
     )
 
     return unique_numbers
+
+def get_unique_numbers_by_date_inscribed(year):
+    """
+    Retourne la liste des 'unique_number' correspondant à une année d'inscription donnée.
+
+    >>> nums = get_unique_numbers_by_date_inscribed(2000)
+    >>> isinstance(nums, list)
+    True
+
+    >>> nums_no_result = get_unique_numbers_by_date_inscribed(1800)  # année vide
+    >>> nums_no_result == []
+    True
+    """
+    df = load_unesco_data()
+
+    # On filtre les lignes correspondant exactement à l'année donnée
+    filtered_df = df[df["date_inscribed"] == year]
+
+    unique_numbers = (
+        filtered_df["unique_number"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    return unique_numbers
+
+def get_unique_numbers_between_years(start_year, end_year):
+    """
+    Retourne la liste des 'unique_number' correspondant aux années d'inscription
+    entre start_year et end_year inclus.
+
+    >>> nums = get_unique_numbers_between_years(1990, 2000)
+    >>> isinstance(nums, list)
+    True
+
+    # intervalle vide (start > end) -> liste vide
+    >>> get_unique_numbers_between_years(2000, 1990)
+    []
+
+    # période vide
+    >>> res = get_unique_numbers_between_years(1800, 1850)
+    >>> isinstance(res, list)
+    True
+    """
+    df = load_unesco_data()
+
+    # Vérification que start_year est inférieur ou égal à end_year
+    if start_year > end_year:
+        return []
+
+    # On filtre les lignes correspondant aux années dans l'intervalle donné
+    filtered_df = df[
+        (df["date_inscribed"] >= start_year)
+        & (df["date_inscribed"] <= end_year)
+    ]
+
+    unique_numbers = (
+        filtered_df["unique_number"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    return unique_numbers
