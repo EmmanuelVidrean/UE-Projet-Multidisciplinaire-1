@@ -2,20 +2,9 @@ from dash import Dash, html, dcc, Input, Output
 import src.components.navbar as navbar_module
 import src.components.footer as footer_module
 from src.pages.home import layout as home_layout
+from src.pages.dataviz import layout as dataviz_layout
 
-def dataviz_layout():
-    """Page Data visualization (placeholder pour l’instant)."""
-    return html.Div(
-        children=[
-            html.H1("Data visualization"),
-            html.P(
-                "Ici, tu ajouteras plus tard les cartes, tableaux et "
-                "graphiques liés aux données UNESCO."
-            ),
-        ],
-    )
-
-app = Dash(__name__, suppress_callback_exceptions=True) #dataviz n'existe pas encore et pour pas crash
+app = Dash(__name__, suppress_callback_exceptions=True)
 
 def serve_layout():
     """Layout global : navbar + contenu + footer."""
