@@ -1,4 +1,5 @@
 from dash import html
+from src.components.filters import filters_bar
 
 def layout():
     """
@@ -16,7 +17,9 @@ def layout():
                 "UNESCO Data Visualization",
                 style={"marginBottom": "24px"},
             ),
-            # Barre de filtres
+            # la barre de filtres
+            filters_bar(),
+
             # les différents sous onglet
         ],
     )
