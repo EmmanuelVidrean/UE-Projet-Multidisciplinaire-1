@@ -1,5 +1,6 @@
 from dash import html
 from src.components.filters import filters_bar
+from src.components.viz_tabs import viz_tabs
 
 def layout():
     """
@@ -19,7 +20,7 @@ def layout():
             ),
             # la barre de filtres
             filters_bar(),
-
             # les différents sous onglet
+            viz_tabs(),
         ],
     )
