@@ -31,6 +31,20 @@ def make_world_map_html():
         control=False,
     ).add_to(m)
 
+    unique_numbers = get_all_unique_numbers() # ici cette fonction sera à changer lorsuqe les filtre seront implémentés @TODO
+    coords_dict = get_coords_dict(unique_numbers)
+
+    for unique_number,(lon, lat) in coords_dict.items():
+        icon = folium.features.CustomIcon(  
+            icon_image="assets/placeholder.png",
+            icon_size=(20, 20),
+        )
+
+        folium.Marker(
+            location=[lat, lon],
+            icon=icon
+        ).add_to(m)
+
     return m._repr_html_()
 
 
