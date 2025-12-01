@@ -1,6 +1,6 @@
-from dash import html
-import folium
-from folium.plugins import MarkerCluster
+from dash import html, dcc, callback, Input, Output
+import plotly.graph_objects as go
+import dash_bootstrap_components as dbc
 
 from src.utils.get_data import (
     get_all_unique_numbers,
@@ -9,64 +9,84 @@ from src.utils.get_data import (
 )
 
 
-def make_world_map_html():
+def make_world_map_figure():
     """
-    Crée une carte du monde avec Folium et place tous les sites UNESCO.
+    Crée une carte du monde avec Plotly (Scattergeo),
+    avec un point par site UNESCO.
     """
-
-    m = folium.Map(
-        location=[0, 0],
-        zoom_start=2,
-        tiles=None,
-        max_bounds=True,
-        min_zoom=2,
-        width="100%",
-        height="100%",
-    )
-
-    folium.TileLayer(
-        tiles="CartoDB positron",
-        name="CartoDB positron",
-        attr="Map tiles by CartoDB, CC BY 3.0 — Map data © OpenStreetMap",
-        control=False,
-    ).add_to(m)
-
-    unique_numbers = get_all_unique_numbers() # ici cette fonction sera à changer lorsuqe les filtre seront implémentés @TODO
+    unique_numbers = get_all_unique_numbers()
     coords_dict = get_coords_dict(unique_numbers)
 
-    for unique_number,(lon, lat) in coords_dict.items():
-        icon = folium.features.CustomIcon(  
-            icon_image="assets/placeholder.png",
-            icon_size=(20, 20),
+    lats = []
+    lons = []
+    names = []
+    descriptions = []
+    ids = []
+
+    for unique_num, (lon, lat) in coords_dict.items():
+        site = get_site_by_unique_number(unique_num) or {}
+
+        name = site.get("name_en") or f"Site #{unique_num}"
+        desc = site.get("short_description_en", "No description available.")
+
+        lats.append(lat)
+        lons.append(lon)
+        names.append(name)
+        descriptions.append(desc)
+        ids.append(unique_num)
+
+    fig = go.Figure(
+        go.Scattergeo(
+            lat=lats,
+            lon=lons,
+            mode="markers",
+            marker=dict(
+                size=4,
+                color="#0066cc",
+            ),
+            text=names,
+            hovertemplate="%{text}<extra></extra>",
+            customdata=list(zip(ids, names, descriptions)),
         )
+    )
 
-        folium.Marker(
-            location=[lat, lon],
-            icon=icon
-        ).add_to(m)
+    fig.update_geos(
+        showcountries=True,
+        showcoastlines=True,
+        showland=True,
+        landcolor="#f0f0f0",
+    )
 
-    return m._repr_html_()
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+        clickmode="event+select",
+    )
+
+    return fig
+
 
 
 def layout():
     """
-    Layout de l’onglet Carte.
+    Layout de l’onglet Carte avec :
+    - la map Plotly
     """
-    world_map_html = make_world_map_html()
-
     return html.Div(
         id="tab-map-content",
+        style={
+            "height": "80%", 
+            "width": "80%",
+            "margin": "0 auto",
+            "padding": "24px",
+            "alignItems": "center",
+            "justifyContent": "center",
+        },
         children=[
-            html.H3("Carte du monde"),
-            html.Iframe(
+            html.H3("World Map of UNESCO World Heritage Sites"),
+            dcc.Graph(
                 id="world-map",
-                srcDoc=world_map_html,
-                style={
-                    "width": "100%",
-                    "height": "600px",
-                    "border": "none",
-                },
+                figure=make_world_map_figure(),
+                style={"width": "100%", "height": "600px"},
             ),
         ],
-        style={"height": "100%", "width": "100%"},
     )

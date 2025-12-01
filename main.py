@@ -1,10 +1,12 @@
 from dash import Dash, html, dcc, Input, Output
+import dash_bootstrap_components as dbc
 import src.components.navbar as navbar_module
 import src.components.footer as footer_module
 from src.pages.home import layout as home_layout
 from src.pages.dataviz import layout as dataviz_layout
 
-app = Dash(__name__, suppress_callback_exceptions=True)
+
+app = Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 def serve_layout():
     """Layout global : navbar + contenu + footer."""
