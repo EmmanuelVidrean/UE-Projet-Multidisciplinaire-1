@@ -1,9 +1,11 @@
 import os
 import pandas as pd
+from functools import lru_cache
 
-# commande pour tester cette fonction:
+# commande pour tester les fonctions avec les docstrings :
 # python -m doctest -v src/utils/get_data.py
 
+@lru_cache(maxsize=1)
 def load_unesco_data():
     """
     Charge le fichier CSV nettoyé
@@ -26,6 +28,7 @@ def load_unesco_data():
 
     return data_frame
 
+@lru_cache(maxsize=1)
 def get_all_unique_numbers():
     """
     Retourne la liste de tous les 'unique_number' présents dans le dataset
@@ -42,6 +45,7 @@ def get_all_unique_numbers():
     unique_numbers = df["unique_number"].dropna().tolist()
     return unique_numbers
 
+@lru_cache(maxsize=5000)
 def get_site_by_unique_number(unique_number):
     """
     Prend en parametre un unique number
@@ -116,6 +120,7 @@ def get_coords_dict(unique_numbers):
 
     return result
 
+@lru_cache(maxsize=1)
 def get_all_categories():
     """
     Retourne la liste de toutes les catégories
@@ -140,6 +145,7 @@ def get_all_categories():
 
     return categories
 
+@lru_cache(maxsize=1)
 def get_all_states_name():
     """
     Retourne la liste de tous les pays
@@ -166,6 +172,7 @@ def get_all_states_name():
 
     return categories
 
+@lru_cache(maxsize=1)
 def get_all_region_name():
     """
     Retourne la liste de tous les region
@@ -192,6 +199,7 @@ def get_all_region_name():
 
     return categories
 
+@lru_cache(maxsize=1)
 def get_all_udnp_codes():
     """
     Retourne la liste de tous les codes UDNP distincts du dataset.
@@ -219,6 +227,7 @@ def get_all_udnp_codes():
     # On renvoie une liste triée
     return sorted(codes_set)
 
+@lru_cache(maxsize=5000)
 def get_udnp_code_by_state(state_name):
     """
     Retourne le code UDNP exact d'un pays donné.
@@ -246,6 +255,7 @@ def get_udnp_code_by_state(state_name):
 
     return code[0]
 
+@lru_cache(maxsize=5000)
 def get_unique_numbers_by_category(category_name):
     """
     Retourne la liste des 'unique_number' correspondant à une catégorie donnée. (ex: "Cultural", "Natural", "Mixed")
@@ -274,6 +284,7 @@ def get_unique_numbers_by_category(category_name):
 
     return unique_numbers
 
+@lru_cache(maxsize=5000)
 def get_unique_numbers_by_state(state_name):
     """
     Retourne la liste des 'unique_number' correspondant au pays donnée.
@@ -301,6 +312,7 @@ def get_unique_numbers_by_state(state_name):
 
     return unique_numbers
 
+@lru_cache(maxsize=5000)
 def get_unique_numbers_by_region(region_name):
     """
     Retourne la liste des 'unique_number' correspondant au region donnée.
@@ -329,6 +341,7 @@ def get_unique_numbers_by_region(region_name):
 
     return unique_numbers
 
+@lru_cache(maxsize=5000)
 def get_unique_numbers_by_date_inscribed(year):
     """
     Retourne la liste des 'unique_number' correspondant à une année d'inscription donnée.
@@ -355,6 +368,7 @@ def get_unique_numbers_by_date_inscribed(year):
 
     return unique_numbers
 
+@lru_cache(maxsize=5000)
 def get_unique_numbers_between_years(start_year, end_year):
     """
     Retourne la liste des 'unique_number' correspondant aux années d'inscription
@@ -394,6 +408,7 @@ def get_unique_numbers_between_years(start_year, end_year):
 
     return unique_numbers
 
+@lru_cache(maxsize=5000)
 def get_unique_numbers_by_name_substring(substring):
     """
     Retourne la liste des 'unique_number' correspondant aux sites dont le nom
@@ -420,7 +435,6 @@ def get_unique_numbers_by_name_substring(substring):
     )
 
     return unique_numbers
-
 
 def intersection(old_set, new_set):
     """
