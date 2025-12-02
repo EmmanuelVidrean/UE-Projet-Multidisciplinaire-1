@@ -1,27 +1,116 @@
-from dash import html
+from dash import html, dcc
+import pandas as pd
+from src.utils.get_data import get_all_categories, get_all_states_name, get_all_region_name, load_unesco_data
 
 def filters_bar():
     """
     Barre de filtres en haut de la page DataViz.
-    (Recherche, dropdowns, sélecteurs, bouton Rechercher...)
-    Manu c'est à toi de travailler la dessus (je vais te démarrer si tu le fais pas)
+    Permet de filtrer les sites UNESCO par catégorie, pays, région et année d'inscription.
     """
+    # Récupération des options pour les dropdowns
+    categories = get_all_categories()
+    states = sorted(get_all_states_name())
+    regions = sorted(get_all_region_name())
+    
+    # Calcul des années min/max pour le RangeSlider
+    df = load_unesco_data()
+    years = pd.to_numeric(df['date_inscribed'], errors='coerce').dropna().astype(int)
+    min_year = int(years.min()) if not years.empty else 1900
+    max_year = int(years.max()) if not years.empty else 2025
+    
     return html.Div(
         style={
-            "padding": "16px 24px",
-            "marginBottom": "16px",
+            "padding": "20px",
+            "marginBottom": "20px",
             "borderRadius": "8px",
-            "backgroundColor": "#f5f5f5",
-            "display": "flex",
-            "gap": "16px",
-            "alignItems": "center",
-            "flexWrap": "wrap",
+            "backgroundColor": "#f8f9fa",
+            "boxShadow": "0 2px 4px rgba(0,0,0,0.1)",
         },
         children=[
-            html.Strong("Filtres (placeholder)"),
-            html.Span(
-                "Ici on ajoutera : barre de recherche, dropdowns, sélecteur d'année, bouton Rechercher...",
-                style={"fontSize": "14px", "color": "#555"},
+            html.H3("Filtres", style={"marginBottom": "16px", "color": "#333"}),
+            
+            html.Div(
+                style={
+                    "display": "grid",
+                    "gridTemplateColumns": "repeat(auto-fit, minmax(250px, 1fr))",
+                    "gap": "16px",
+                },
+                children=[
+                    # Filtre par catégorie
+                    html.Div([
+                        html.Label("Catégorie", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                        dcc.Dropdown(
+                            id='filter-category',
+                            options=[{'label': 'Toutes les catégories', 'value': 'all'}] + 
+                                    [{'label': cat, 'value': cat} for cat in categories],
+                            value='all',
+                            clearable=False,
+                            style={"width": "100%"}
+                        ),
+                    ]),
+                    
+                    # Filtre par pays
+                    html.Div([
+                        html.Label("Pays", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                        dcc.Dropdown(
+                            id='filter-state',
+                            options=[{'label': 'Tous les pays', 'value': 'all'}] + 
+                                    [{'label': state, 'value': state} for state in states],
+                            value='all',
+                            clearable=False,
+                            style={"width": "100%"}
+                        ),
+                    ]),
+                    
+                    # Filtre par région
+                    html.Div([
+                        html.Label("Région", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                        dcc.Dropdown(
+                            id='filter-region',
+                            options=[{'label': 'Toutes les régions', 'value': 'all'}] + 
+                                    [{'label': region, 'value': region} for region in regions],
+                            value='all',
+                            clearable=False,
+                            style={"width": "100%"}
+                        ),
+                    ]),
+                ],
+            ),
+            
+            # Filtre par intervalle d'années d'inscription
+            html.Div(
+                style={"marginTop": "16px"},
+                children=[
+                    html.Label("Années d'inscription", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                    dcc.RangeSlider(
+                        id='filter-years',
+                        min=min_year,
+                        max=max_year,
+                        value=[min_year, max_year],
+                        marks={str(y): str(y) for y in range(min_year, max_year+1, max(1, (max_year-min_year)//6))},
+                        tooltip={"placement": "bottom", "always_visible": True},
+                        allowCross=False,
+                    ),
+                ]
+            ),
+            
+            # Barre de recherche
+            html.Div(
+                style={"marginTop": "16px"},
+                children=[
+                    html.Label("Recherche par nom", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                    dcc.Input(
+                        id='filter-search',
+                        type='text',
+                        placeholder='Rechercher un site par nom...',
+                        style={
+                            "width": "100%",
+                            "padding": "8px",
+                            "borderRadius": "4px",
+                            "border": "1px solid #ccc",
+                        }
+                    ),
+                ]
             ),
         ],
     )

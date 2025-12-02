@@ -1,20 +1,25 @@
 from dash import html, dcc, callback, Input, Output, State
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
+import pandas as pd
 
 from src.utils.get_data import (
-    get_all_unique_numbers,
+    load_unesco_data,
     get_coords_dict,
     get_site_by_unique_number,
 )
 
 
-def make_world_map_figure():
+def make_world_map_figure(filtered_df=None):
     """
     Crée une carte du monde avec Plotly (Scattergeo),
     avec un point par site UNESCO.
+    Si filtered_df est fourni, utilise ce DataFrame filtré.
     """
-    unique_numbers = get_all_unique_numbers()
+    if filtered_df is None:
+        filtered_df = load_unesco_data()
+    
+    unique_numbers = filtered_df["unique_number"].dropna().tolist()
     coords_dict = get_coords_dict(unique_numbers)
 
     lats = []
@@ -100,6 +105,41 @@ def layout():
             ),
         ],
     )
+
+@callback(
+    Output("world-map", "figure"),
+    Input("filter-category", "value"),
+    Input("filter-state", "value"),
+    Input("filter-region", "value"),
+    Input("filter-search", "value"),
+    Input("filter-years", "value"),
+)
+def update_map(category, state, region, search_text, year_range):
+    """
+    Met à jour la carte en fonction des filtres sélectionnés.
+    """
+    df = load_unesco_data()
+    
+    # Appliquer les filtres
+    if category and category != 'all':
+        df = df[df['category'] == category]
+    
+    if state and state != 'all':
+        df = df[df['states_name_en'] == state]
+    
+    if region and region != 'all':
+        df = df[df['region_en'] == region]
+    
+    if search_text:
+        df = df[df['name_en'].str.contains(search_text, case=False, na=False)]
+    
+    # Filtre par année d'inscription
+    if year_range:
+        df['year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
+        df = df[(df['year_inscribed'] >= year_range[0]) & (df['year_inscribed'] <= year_range[1])]
+    
+    return make_world_map_figure(df)
+
 
 @callback(
     Output("site-modal", "is_open"),
