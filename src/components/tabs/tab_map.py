@@ -1,4 +1,4 @@
-from dash import html, dcc, callback, Input, Output
+from dash import html, dcc, callback, Input, Output, State
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 
@@ -88,5 +88,33 @@ def layout():
                 figure=make_world_map_figure(),
                 style={"width": "100%", "height": "600px"},
             ),
+
+            dbc.Modal(
+                id="site-modal",
+                size="lg",
+                is_open=False,
+                children=[
+                    dbc.ModalHeader(dbc.ModalTitle(id="modal-title")),
+                    dbc.ModalBody(id="modal-body"),
+                ],
+            ),
         ],
     )
+
+@callback(
+    Output("site-modal", "is_open"),
+    Output("modal-title", "children"),
+    Output("modal-body", "children"),
+    Input("world-map", "clickData"),
+    State("site-modal", "is_open"),
+)
+def toggle_modal(clickData, is_open):
+    # Quand on clique sur un point de la carte
+    if clickData:
+        point = clickData["points"][0]
+        unique_num, name, desc = point["customdata"]
+        # Ouvre la modal avec le contenu
+        return True, name, desc
+
+    # Aucun clic → on ne change rien
+    return is_open, "", ""
