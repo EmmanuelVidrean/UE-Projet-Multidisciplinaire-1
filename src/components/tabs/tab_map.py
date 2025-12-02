@@ -1,6 +1,7 @@
 from dash import html, dcc, callback, Input, Output, State
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
+import pandas as pd
 
 from src.utils.get_data import (
     load_unesco_data,
@@ -111,8 +112,9 @@ def layout():
     Input("filter-state", "value"),
     Input("filter-region", "value"),
     Input("filter-search", "value"),
+    Input("filter-years", "value"),
 )
-def update_map(category, state, region, search_text):
+def update_map(category, state, region, search_text, year_range):
     """
     Met à jour la carte en fonction des filtres sélectionnés.
     """
@@ -130,6 +132,11 @@ def update_map(category, state, region, search_text):
     
     if search_text:
         df = df[df['name_en'].str.contains(search_text, case=False, na=False)]
+    
+    # Filtre par année d'inscription
+    if year_range:
+        df['year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
+        df = df[(df['year_inscribed'] >= year_range[0]) & (df['year_inscribed'] <= year_range[1])]
     
     return make_world_map_figure(df)
 

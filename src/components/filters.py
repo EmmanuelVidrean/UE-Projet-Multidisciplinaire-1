@@ -1,15 +1,22 @@
 from dash import html, dcc
-from src.utils.get_data import get_all_categories, get_all_states_name, get_all_region_name
+import pandas as pd
+from src.utils.get_data import get_all_categories, get_all_states_name, get_all_region_name, load_unesco_data
 
 def filters_bar():
     """
     Barre de filtres en haut de la page DataViz.
-    Permet de filtrer les sites UNESCO par catégorie, pays et région.
+    Permet de filtrer les sites UNESCO par catégorie, pays, région et année d'inscription.
     """
     # Récupération des options pour les dropdowns
     categories = get_all_categories()
     states = sorted(get_all_states_name())
     regions = sorted(get_all_region_name())
+    
+    # Calcul des années min/max pour le RangeSlider
+    df = load_unesco_data()
+    years = pd.to_numeric(df['date_inscribed'], errors='coerce').dropna().astype(int)
+    min_year = int(years.min()) if not years.empty else 1900
+    max_year = int(years.max()) if not years.empty else 2025
     
     return html.Div(
         style={
@@ -68,6 +75,23 @@ def filters_bar():
                         ),
                     ]),
                 ],
+            ),
+            
+            # Filtre par intervalle d'années d'inscription
+            html.Div(
+                style={"marginTop": "16px"},
+                children=[
+                    html.Label("Années d'inscription", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                    dcc.RangeSlider(
+                        id='filter-years',
+                        min=min_year,
+                        max=max_year,
+                        value=[min_year, max_year],
+                        marks={str(y): str(y) for y in range(min_year, max_year+1, max(1, (max_year-min_year)//6))},
+                        tooltip={"placement": "bottom", "always_visible": True},
+                        allowCross=False,
+                    ),
+                ]
             ),
             
             # Barre de recherche

@@ -1,5 +1,6 @@
 from dash import html, dash_table, callback, Input, Output
 from src.utils.get_data import load_unesco_data
+import pandas as pd
 
 def layout():
     return html.Div(
@@ -13,8 +14,9 @@ def layout():
                     {'name': 'Catégorie', 'id': 'category'},
                     {'name': 'Pays', 'id': 'states_name_en'},
                     {'name': 'Région', 'id': 'region_en'},
+                    {'name': 'Date d\'inscription', 'id': 'date_inscribed'},
                 ],
-                data=load_unesco_data()[['name_en', 'category', 'states_name_en', 'region_en']].to_dict('records'),
+                data=load_unesco_data()[['name_en', 'category', 'states_name_en', 'region_en', 'date_inscribed']].to_dict('records'),
                 page_size=20,
                 style_table={'overflowX': 'auto'},
                 style_cell={
@@ -45,8 +47,9 @@ def layout():
     Input('filter-state', 'value'),
     Input('filter-region', 'value'),
     Input('filter-search', 'value'),
+    Input('filter-years', 'value'),
 )
-def update_table(category, state, region, search_text):
+def update_table(category, state, region, search_text, year_range):
     """
     Met à jour le tableau en fonction des filtres sélectionnés.
     """
@@ -65,4 +68,9 @@ def update_table(category, state, region, search_text):
     if search_text:
         df = df[df['name_en'].str.contains(search_text, case=False, na=False)]
     
-    return df[['name_en', 'category', 'states_name_en', 'region_en']].to_dict('records')
+    # Filtre par année d'inscription
+    if year_range:
+        df['year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
+        df = df[(df['year_inscribed'] >= year_range[0]) & (df['year_inscribed'] <= year_range[1])]
+    
+    return df[['name_en', 'category', 'states_name_en', 'region_en', 'date_inscribed']].to_dict('records')
