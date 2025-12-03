@@ -9,17 +9,17 @@ def viz_tabs():
         value="tab-map",   # onglet sélectionné par défaut
         children=[
             dcc.Tab(
-                label="Carte",
+                label="Map",
                 value="tab-map",
                 children=map_layout(),
             ),
             dcc.Tab(
-                label="Tableau",
+                label="Table",
                 value="tab-table",
                 children=table_layout(),
             ),
             dcc.Tab(
-                label="Graphiques",
+                label="Charts",
                 value="tab-graph",
                 children=graph_layout(),
             ),

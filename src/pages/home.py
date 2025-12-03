@@ -28,10 +28,9 @@ def layout():
                                 style={"marginBottom": "20px"},
                             ),
                             html.P(
-                                "Ce dashboard permet d’explorer les sites "
-                                "inscrits au patrimoine mondial de l’UNESCO "
-                                "à travers des cartes, tableaux et graphiques "
-                                "interactifs.",
+                                "This dashboard allows you to explore UNESCO "
+                                "World Heritage Sites through interactive maps, "
+                                "tables, and charts.",
                                 style={"fontSize": "18px", "lineHeight": "1.5"},
                             ),
                         ],
