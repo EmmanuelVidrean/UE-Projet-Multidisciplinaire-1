@@ -3,7 +3,6 @@ import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 import pandas as pd
 from src.components.site_modal import site_modal 
-
 from src.utils.get_data import (
     load_unesco_data,
     get_coords_dict,
@@ -100,41 +99,6 @@ def layout():
     )
 
 @callback(
-    Output("world-map", "figure"),
-    Input("filter-category", "value"),
-    Input("filter-state", "value"),
-    Input("filter-region", "value"),
-    Input("filter-search", "value"),
-    Input("filter-years", "value"),
-)
-def update_map(category, state, region, search_text, year_range):
-    """
-    Met à jour la carte en fonction des filtres sélectionnés.
-    """
-    df = load_unesco_data()
-    
-    # Appliquer les filtres
-    if category and category != 'all':
-        df = df[df['category'] == category]
-    
-    if state and state != 'all':
-        df = df[df['states_name_en'] == state]
-    
-    if region and region != 'all':
-        df = df[df['region_en'] == region]
-    
-    if search_text:
-        df = df[df['name_en'].str.contains(search_text, case=False, na=False)]
-    
-    # Filtre par année d'inscription
-    if year_range:
-        df['year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
-        df = df[(df['year_inscribed'] >= year_range[0]) & (df['year_inscribed'] <= year_range[1])]
-    
-    return make_world_map_figure(df)
-
-
-@callback(
     Output("site-modal", "is_open"),
     Output("modal-title", "children"),
     Output("modal-body", "children"),
@@ -146,8 +110,19 @@ def toggle_modal(clickData, is_open):
     if clickData:
         point = clickData["points"][0]
         unique_num, name, desc = point["customdata"]
-        # Ouvre la modal avec le contenu
-        return True, name, desc
 
-    # Aucun clic → on ne change rien
+        # On récupère toutes les infos du site
+        site = get_site_by_unique_number(unique_num) or {}
+
+        category = site.get("category", "Unknown")
+        year = site.get("date_inscribed", "Unknown")
+        region = site.get("region_en", "Unknown")
+        country = site.get("states_name_en", "Unknown")
+        hectares = site.get("area_hectares", site.get("hectares", "Unknown"))
+        desc = site.get("short_description_en", "No description available.")
+
+        body=[]
+        
+        return True, name, body
+    
     return is_open, "", ""

@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 
 def site_modal():
     """
-    Modal réutilisable pour afficher les infos d'un site UNESCO.
+    Modal pour afficher les infos d'un site UNESCO.
     IDs fixes :
       - id="site-modal"
       - title: id="modal-title"
