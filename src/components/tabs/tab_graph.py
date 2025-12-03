@@ -1,5 +1,6 @@
 from dash import html, dcc, callback, Input, Output
 import plotly.express as px
+import plotly.graph_objects as go
 from src.utils.get_data import load_unesco_data
 import pandas as pd
 
@@ -36,7 +37,7 @@ def update_graph(category, state, region, search_text, year_range):
     """
     Met à jour le graphique en fonction des filtres sélectionnés.
     """
-    df = load_unesco_data()
+    df = load_unesco_data().copy()
     
     # Appliquer les filtres
     if category and category != 'all':
@@ -53,12 +54,12 @@ def update_graph(category, state, region, search_text, year_range):
     
     # Filtre par année d'inscription
     if year_range:
-        df['year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
+        df.loc[:, 'year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
         df = df[(df['year_inscribed'] >= year_range[0]) & (df['year_inscribed'] <= year_range[1])]
     
     # Convertir area_hectares et date_inscribed en numérique
-    df['area_hectares'] = pd.to_numeric(df['area_hectares'], errors='coerce')
-    df['date_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
+    df.loc[:, 'area_hectares'] = pd.to_numeric(df['area_hectares'], errors='coerce')
+    df.loc[:, 'date_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
     
     # Supprimer les valeurs manquantes
     df_with_data = df.dropna(subset=['area_hectares', 'date_inscribed'])
@@ -127,7 +128,7 @@ def update_bar_graph(category, state, region, search_text, year_range):
     """
     Met à jour le graphique en barres en fonction des filtres sélectionnés.
     """
-    df = load_unesco_data()
+    df = load_unesco_data().copy()
     
     # Appliquer les filtres
     if category and category != 'all':
@@ -144,11 +145,31 @@ def update_bar_graph(category, state, region, search_text, year_range):
     
     # Filtre par année d'inscription
     if year_range:
-        df['year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
+        df.loc[:, 'year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
         df = df[(df['year_inscribed'] >= year_range[0]) & (df['year_inscribed'] <= year_range[1])]
     
     # Compter le nombre de sites par pays et catégorie
     country_category_stats = df.groupby(['states_name_en', 'category']).size().reset_index(name='count')
+    
+    # Vérifier s'il y a des données
+    if country_category_stats.empty:
+        # Retourner un graphique vide avec un message
+        fig = go.Figure()
+        fig.update_layout(
+            template='plotly_white',
+            height=600,
+            title='Top 30 Countries: Distribution of Sites by Category',
+            xaxis={'visible': False},
+            yaxis={'visible': False},
+            annotations=[{
+                'text': 'No data available for the selected filters',
+                'xref': 'paper',
+                'yref': 'paper',
+                'showarrow': False,
+                'font': {'size': 20}
+            }]
+        )
+        return fig
     
     # Calculer le total par pays pour trier
     country_totals = country_category_stats.groupby('states_name_en')['count'].sum().reset_index()
@@ -188,7 +209,7 @@ def update_bar_graph(category, state, region, search_text, year_range):
         title_font_size=20,
         xaxis_tickangle=-45,
         showlegend=True,
-        legend_title_text='Catégorie',
+        legend_title_text='Category',
         barmode='stack'
     )
     
@@ -207,7 +228,7 @@ def update_area_histogram(category, state, region, search_text, year_range):
     """
     Met à jour l'histogramme de la distribution des superficies des sites.
     """
-    df = load_unesco_data()
+    df = load_unesco_data().copy()
     
     # Appliquer les filtres
     if category and category != 'all':
@@ -224,15 +245,15 @@ def update_area_histogram(category, state, region, search_text, year_range):
     
     # Filtre par année d'inscription
     if year_range:
-        df['year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
+        df.loc[:, 'year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
         df = df[(df['year_inscribed'] >= year_range[0]) & (df['year_inscribed'] <= year_range[1])]
     
     # Convertir area_hectares en numérique et en km²
-    df['area_hectares'] = pd.to_numeric(df['area_hectares'], errors='coerce')
-    df['area_km2'] = df['area_hectares'] / 100  # 1 km² = 100 hectares
+    df.loc[:, 'area_hectares'] = pd.to_numeric(df['area_hectares'], errors='coerce')
+    df.loc[:, 'area_km2'] = df['area_hectares'] / 100  # 1 km² = 100 hectares
     
     # Supprimer les valeurs manquantes et les valeurs nulles
-    df_with_area = df.dropna(subset=['area_km2'])
+    df_with_area = df.dropna(subset=['area_km2']).copy()
     df_with_area = df_with_area[df_with_area['area_km2'] > 0]
     
     # Créer des tranches de superficie
@@ -240,7 +261,7 @@ def update_area_histogram(category, state, region, search_text, year_range):
     labels = ['0-5 km²', '5-10 km²', '10-50 km²', '50-100 km²', '100-500 km²', 
               '500-1000 km²', '1000-5000 km²', '5000+ km²']
     
-    df_with_area['superficie_range'] = pd.cut(df_with_area['area_km2'], bins=bins, labels=labels, include_lowest=True)
+    df_with_area.loc[:, 'superficie_range'] = pd.cut(df_with_area['area_km2'], bins=bins, labels=labels, include_lowest=True)
     
     # Compter le nombre de sites par tranche
     area_counts = df_with_area['superficie_range'].value_counts().sort_index().reset_index()
