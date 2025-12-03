@@ -53,7 +53,7 @@ def update_table(category, state, region, search_text, year_range):
     """
     Met à jour le tableau en fonction des filtres sélectionnés.
     """
-    df = load_unesco_data()
+    df = load_unesco_data().copy()
     
     # Appliquer les filtres
     if category and category != 'all':
@@ -70,7 +70,7 @@ def update_table(category, state, region, search_text, year_range):
     
     # Filtre par année d'inscription
     if year_range:
-        df['year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
+        df.loc[:, 'year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
         df = df[(df['year_inscribed'] >= year_range[0]) & (df['year_inscribed'] <= year_range[1])]
     
     return df[['name_en', 'category', 'states_name_en', 'region_en', 'date_inscribed']].to_dict('records')
