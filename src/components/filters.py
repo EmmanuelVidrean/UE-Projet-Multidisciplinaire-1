@@ -76,41 +76,50 @@ def filters_bar():
                     ]),
                 ],
             ),
-            
-            # Filtre par intervalle d'années d'inscription
+
             html.Div(
-                style={"marginTop": "16px"},
+                style={
+                    "display": "grid",
+                    "gridTemplateColumns": "repeat(auto-fit, minmax(250px, 1fr))",
+                    "gap": "16px",
+                },
                 children=[
-                    html.Label("Années d'inscription", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
-                    dcc.RangeSlider(
-                        id='filter-years',
-                        min=min_year,
-                        max=max_year,
-                        value=[min_year, max_year],
-                        marks={str(y): str(y) for y in range(min_year, max_year+1, max(1, (max_year-min_year)//6))},
-                        tooltip={"placement": "bottom", "always_visible": True},
-                        allowCross=False,
+                    # Barre de recherche
+                    html.Div(
+                        style={"marginTop": "16px"},
+                        children=[
+                            html.Label("Recherche par nom", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                            dcc.Input(
+                                id='filter-search',
+                                type='text',
+                                placeholder='Rechercher un site par nom...',
+                                style={
+                                    "width": "100%",
+                                    "padding": "8px",
+                                    "borderRadius": "4px",
+                                    "border": "1px solid #ccc",
+                                }
+                            ),
+                        ]
                     ),
-                ]
+                    # Filtre par intervalle d'années d'inscription
+                    html.Div(
+                        style={"marginTop": "16px"},
+                        children=[
+                            html.Label("Années d'inscription", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                            dcc.RangeSlider(
+                                id='filter-years',
+                                min=min_year,
+                                max=max_year,
+                                value=[min_year, max_year],
+                                marks={str(y): str(y) for y in range(min_year, max_year+1, max(1, (max_year-min_year)//6))},
+                                tooltip={"placement": "bottom", "always_visible": True},
+                                allowCross=False,
+                            ),
+                        ]
+                    ),
+                ],
             ),
             
-            # Barre de recherche
-            html.Div(
-                style={"marginTop": "16px"},
-                children=[
-                    html.Label("Recherche par nom", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
-                    dcc.Input(
-                        id='filter-search',
-                        type='text',
-                        placeholder='Rechercher un site par nom...',
-                        style={
-                            "width": "100%",
-                            "padding": "8px",
-                            "borderRadius": "4px",
-                            "border": "1px solid #ccc",
-                        }
-                    ),
-                ]
-            ),
         ],
     )
