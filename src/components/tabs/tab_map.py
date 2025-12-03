@@ -2,6 +2,7 @@ from dash import html, dcc, callback, Input, Output, State
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 import pandas as pd
+from src.components.site_modal import site_modal 
 
 from src.utils.get_data import (
     load_unesco_data,
@@ -94,15 +95,7 @@ def layout():
                 style={"width": "100%", "height": "600px"},
             ),
 
-            dbc.Modal(
-                id="site-modal",
-                size="lg",
-                is_open=False,
-                children=[
-                    dbc.ModalHeader(dbc.ModalTitle(id="modal-title")),
-                    dbc.ModalBody(id="modal-body"),
-                ],
-            ),
+            site_modal(),
         ],
     )
 
