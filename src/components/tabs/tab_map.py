@@ -46,7 +46,7 @@ def make_world_map_figure(filtered_df=None):
             lon=lons,
             mode="markers",
             marker=dict(
-                size=4,
+                size=8,
                 color="#0066cc",
             ),
             text=names,
