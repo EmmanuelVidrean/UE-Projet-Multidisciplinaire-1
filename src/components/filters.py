@@ -92,7 +92,7 @@ def filters_bar():
                             dcc.Input(
                                 id='filter-search',
                                 type='text',
-                                placeholder='Rechercher un site par nom...',
+                                placeholder='Search by site name...',
                                 style={
                                     "width": "100%",
                                     "padding": "8px",
