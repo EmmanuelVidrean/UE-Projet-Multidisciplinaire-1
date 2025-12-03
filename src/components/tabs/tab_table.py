@@ -6,15 +6,15 @@ def layout():
     return html.Div(
         style={"padding": "24px"},
         children=[
-            html.H3("Vue Tableau", style={"marginBottom": "16px"}),
+            html.H3("Table View", style={"marginBottom": "16px"}),
             dash_table.DataTable(
                 id='sites-table',
                 columns=[
-                    {'name': 'Nom du site', 'id': 'name_en'},
-                    {'name': 'Catégorie', 'id': 'category'},
-                    {'name': 'Pays', 'id': 'states_name_en'},
-                    {'name': 'Région', 'id': 'region_en'},
-                    {'name': 'Date d\'inscription', 'id': 'date_inscribed'},
+                    {'name': 'Site Name', 'id': 'name_en'},
+                    {'name': 'Category', 'id': 'category'},
+                    {'name': 'Country', 'id': 'states_name_en'},
+                    {'name': 'Region', 'id': 'region_en'},
+                    {'name': 'Inscription Date', 'id': 'date_inscribed'},
                 ],
                 data=load_unesco_data()[['name_en', 'category', 'states_name_en', 'region_en', 'date_inscribed']].to_dict('records'),
                 page_size=20,

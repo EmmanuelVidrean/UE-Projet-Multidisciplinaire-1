@@ -27,7 +27,7 @@ def filters_bar():
             "boxShadow": "0 2px 4px rgba(0,0,0,0.1)",
         },
         children=[
-            html.H3("Filtres", style={"marginBottom": "16px", "color": "#333"}),
+            html.H3("Filters", style={"marginBottom": "16px", "color": "#333"}),
             
             html.Div(
                 style={
@@ -38,10 +38,10 @@ def filters_bar():
                 children=[
                     # Filtre par catégorie
                     html.Div([
-                        html.Label("Catégorie", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                        html.Label("Category", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
                         dcc.Dropdown(
                             id='filter-category',
-                            options=[{'label': 'Toutes les catégories', 'value': 'all'}] + 
+                            options=[{'label': 'All Categories', 'value': 'all'}] + 
                                     [{'label': cat, 'value': cat} for cat in categories],
                             value='all',
                             clearable=False,
@@ -51,10 +51,10 @@ def filters_bar():
                     
                     # Filtre par pays
                     html.Div([
-                        html.Label("Pays", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                        html.Label("Country", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
                         dcc.Dropdown(
                             id='filter-state',
-                            options=[{'label': 'Tous les pays', 'value': 'all'}] + 
+                            options=[{'label': 'All Countries', 'value': 'all'}] + 
                                     [{'label': state, 'value': state} for state in states],
                             value='all',
                             clearable=False,
@@ -64,10 +64,10 @@ def filters_bar():
                     
                     # Filtre par région
                     html.Div([
-                        html.Label("Région", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                        html.Label("Region", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
                         dcc.Dropdown(
                             id='filter-region',
-                            options=[{'label': 'Toutes les régions', 'value': 'all'}] + 
+                            options=[{'label': 'All Regions', 'value': 'all'}] + 
                                     [{'label': region, 'value': region} for region in regions],
                             value='all',
                             clearable=False,
@@ -81,7 +81,7 @@ def filters_bar():
             html.Div(
                 style={"marginTop": "16px"},
                 children=[
-                    html.Label("Années d'inscription", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                    html.Label("Inscription Years", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
                     dcc.RangeSlider(
                         id='filter-years',
                         min=min_year,
@@ -98,11 +98,11 @@ def filters_bar():
             html.Div(
                 style={"marginTop": "16px"},
                 children=[
-                    html.Label("Recherche par nom", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
+                    html.Label("Search by Name", style={"fontWeight": "bold", "marginBottom": "8px", "display": "block"}),
                     dcc.Input(
                         id='filter-search',
                         type='text',
-                        placeholder='Rechercher un site par nom...',
+                        placeholder='Search for a site by name...',
                         style={
                             "width": "100%",
                             "padding": "8px",
