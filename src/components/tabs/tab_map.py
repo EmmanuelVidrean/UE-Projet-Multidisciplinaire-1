@@ -2,7 +2,7 @@ from dash import html, dcc, callback, Input, Output, State
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 import pandas as pd
-
+from src.components.site_modal import site_modal 
 from src.utils.get_data import (
     load_unesco_data,
     get_coords_dict,
@@ -46,7 +46,7 @@ def make_world_map_figure(filtered_df=None):
             lon=lons,
             mode="markers",
             marker=dict(
-                size=4,
+                size=8,
                 color="#0066cc",
             ),
             text=names,
@@ -64,7 +64,7 @@ def make_world_map_figure(filtered_df=None):
 
     fig.update_layout(
         margin=dict(l=0, r=0, t=0, b=0),
-        clickmode="event+select",
+        clickmode="event",
     )
 
     return fig
@@ -94,15 +94,7 @@ def layout():
                 style={"width": "100%", "height": "600px"},
             ),
 
-            dbc.Modal(
-                id="site-modal",
-                size="lg",
-                is_open=False,
-                children=[
-                    dbc.ModalHeader(dbc.ModalTitle(id="modal-title")),
-                    dbc.ModalBody(id="modal-body"),
-                ],
-            ),
+            site_modal(),
         ],
     )
 
@@ -140,7 +132,6 @@ def update_map(category, state, region, search_text, year_range):
     
     return make_world_map_figure(df)
 
-
 @callback(
     Output("site-modal", "is_open"),
     Output("modal-title", "children"),
@@ -153,8 +144,78 @@ def toggle_modal(clickData, is_open):
     if clickData:
         point = clickData["points"][0]
         unique_num, name, desc = point["customdata"]
-        # Ouvre la modal avec le contenu
-        return True, name, desc
 
-    # Aucun clic → on ne change rien
+        # On récupère toutes les infos du site
+        site = get_site_by_unique_number(unique_num) or {}
+
+        category = site.get("category", "Unknown")
+        year = site.get("date_inscribed", "Unknown")
+        region = site.get("region_en", "Unknown")
+        country = site.get("states_name_en", "Unknown")
+        hectares = site.get("area_hectares", site.get("hectares", "Unknown"))
+        desc = site.get("short_description_en", "No description available.")
+
+        body = dbc.Container(
+            [
+                dbc.Row(
+                    [
+                        dbc.Col(html.H5("General information"), width=12),
+                    ],
+                    className="mb-2",
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(html.Strong("Category"), width=4),
+                        dbc.Col(html.Span(category), width=8),
+                    ],
+                    className="mb-1",
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(html.Strong("Inscription year"), width=4),
+                        dbc.Col(html.Span(year), width=8),
+                    ],
+                    className="mb-1",
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(html.Strong("Region"), width=4),
+                        dbc.Col(html.Span(region), width=8),
+                    ],
+                    className="mb-1",
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(html.Strong("Country"), width=4),
+                        dbc.Col(html.Span(country), width=8),
+                    ],
+                    className="mb-1",
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(html.Strong("Area (hectares)"), width=4),
+                        dbc.Col(html.Span(hectares), width=8),
+                    ],
+                    className="mb-3",
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(html.H5("Description"), width=12),
+                    ],
+                    className="mb-2",
+                ),
+                
+                dbc.Row(
+                    [
+                        dbc.Col(html.P(desc), width=12),
+                    ],
+                    className="mb-1",
+                ),
+            ],
+            fluid=True,
+            className="p-2",
+        )
+
+        return True, name, body
+    
     return is_open, "", ""
