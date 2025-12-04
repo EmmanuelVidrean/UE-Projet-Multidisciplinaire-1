@@ -99,12 +99,39 @@ def layout():
     )
 
 @callback(
-    Output("site-modal", "is_open"),
-    Output("modal-title", "children"),
-    Output("modal-body", "children"),
-    Input("world-map", "clickData"),
-    State("site-modal", "is_open"),
+    Output("world-map", "figure"),
+    Input("filter-category", "value"),
+    Input("filter-state", "value"),
+    Input("filter-region", "value"),
+    Input("filter-search", "value"),
+    Input("filter-years", "value"),
 )
+def update_map(category, state, region, search_text, year_range):
+    """
+    Met à jour la carte en fonction des filtres sélectionnés.
+    """
+    df = load_unesco_data().copy()
+    
+    # Appliquer les filtres
+    if category and category != 'all':
+        df = df[df['category'] == category]
+    
+    if state and state != 'all':
+        df = df[df['states_name_en'] == state]
+    
+    if region and region != 'all':
+        df = df[df['region_en'] == region]
+    
+    if search_text:
+        df = df[df['name_en'].str.contains(search_text, case=False, na=False)]
+    
+    # Filtre par année d'inscription
+    if year_range:
+        df.loc[:, 'year_inscribed'] = pd.to_numeric(df['date_inscribed'], errors='coerce')
+        df = df[(df['year_inscribed'] >= year_range[0]) & (df['year_inscribed'] <= year_range[1])]
+    
+    return make_world_map_figure(df)
+
 def toggle_modal(clickData, is_open):
     # Quand on clique sur un point de la carte
     if clickData:
