@@ -132,6 +132,13 @@ def update_map(category, state, region, search_text, year_range):
     
     return make_world_map_figure(df)
 
+@callback(
+    Output("site-modal", "is_open"),
+    Output("modal-title", "children"),
+    Output("modal-body", "children"),
+    Input("world-map", "clickData"),
+    State("site-modal", "is_open"),
+)
 def toggle_modal(clickData, is_open):
     # Quand on clique sur un point de la carte
     if clickData:
