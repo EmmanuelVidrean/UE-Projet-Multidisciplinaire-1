@@ -1,11 +1,12 @@
 import os
 import pandas as pd
 from functools import lru_cache
+from src.utils.clean_data import clean_data
 
 # commande pour tester les fonctions avec les docstrings :
 # python -m doctest -v src/utils/get_data.py
 
-@lru_cache(maxsize=1)
+@lru_cache(maxsize=2)
 def load_unesco_data():
     """
     Charge le fichier CSV nettoyé
@@ -22,6 +23,11 @@ def load_unesco_data():
     # Récupération du csv à partir de l'arborecence du projet
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     data_path = os.path.join(base_dir, "data", "cleaned", "cleaned_data.csv")
+
+    # Vérifier si le fichier nettoyé existe
+    if not os.path.exists(data_path):
+        print("[INFO] Fichier cleaned_data.csv introuvable : lancement du nettoyage...")
+        clean_data()
 
     # Lecture du fichier CSV avec pandas
     data_frame = pd.read_csv(data_path)
