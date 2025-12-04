@@ -1,8 +1,33 @@
 import os
 import pandas as pd
+import re
+from html import unescape
 
 # commande pour tester cette fonction:
 # python -m doctest -v src/utils/clean_data.py
+
+def clean_html_text(text):
+    """
+    Nettoie une chaîne de texte :
+    - décode les entités HTML (&nbsp;, &amp;, etc.)
+    - supprime les balises HTML (<em>, <b>, <i>, ...)
+    - normalise les espaces.
+
+    """
+    # 1) Décodage des entités HTML (&nbsp; -> \xa0, etc.)
+    text = unescape(text)
+
+    # 2) Suppression des balises HTML
+    # Exemple: "<em>Site</em>" -> "Site"
+    text = re.sub(r"<[^>]*>", "", text)
+
+    # 3) Remplacement des espaces insécables (\xa0) par des espaces classiques
+    text = text.replace("\xa0", " ")
+
+    # 4) Nettoyage des espaces multiples
+    text = " ".join(text.split())
+
+    return text
 
 def clean_data():
     """
@@ -36,6 +61,10 @@ def clean_data():
 
     # Supprimer les lignes avec NaN après conversion
     df = df.dropna(subset=['longitude', 'latitude'])
+
+    # Nettoyage de la description courte si la colonne existe
+    if 'short_description_en' in df.columns:
+        df['short_description_en'] = df['short_description_en'].apply(clean_html_text)
 
     # Sauvegarder les données nettoyées
     df.to_csv(cleaned_path, index=False)
