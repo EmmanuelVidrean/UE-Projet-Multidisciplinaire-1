@@ -111,6 +111,7 @@ def filters_bar():
                                 id='filter-years',
                                 min=min_year,
                                 max=max_year,
+                                step=1,
                                 value=[min_year, max_year],
                                 marks={str(y): str(y) for y in range(min_year, max_year+1, max(1, (max_year-min_year)//6))},
                                 tooltip={"placement": "bottom", "always_visible": True},

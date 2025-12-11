@@ -65,6 +65,10 @@ def clean_data():
     # Nettoyage de la description courte si la colonne existe
     if 'short_description_en' in df.columns:
         df['short_description_en'] = df['short_description_en'].apply(clean_html_text)
+    
+    # Nettoyage de name_en  si la colonne existe
+    if 'name_en' in df.columns:
+        df['name_en'] = df['name_en'].apply(clean_html_text)
 
     # Sauvegarder les données nettoyées
     df.to_csv(cleaned_path, index=False)
