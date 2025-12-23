@@ -10,6 +10,13 @@ Dashboard interactif de visualisation des sites du patrimoine mondial de l'UNESC
 - [Copyright](#copyright)
 
 ---
+## Démonstration
+
+Regardez la présentation du projet en vidéo :
+
+[![Voir la vidéo](https://img.youtube.com/vi/G38z7RNeb9Q/maxresdefault.jpg)](https://www.youtube.com/watch?v=G38z7RNeb9Q)
+
+*Cliquez sur l'image pour voir la vidéo sur YouTube*
 
 ## User Guide
 
