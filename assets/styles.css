@@ -65,3 +65,72 @@ nav a::after {
 nav a:hover::after {
     width: 80%;
 }
+
+footer {
+    background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-white) 100%) !important;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+footer a {
+    transition: var(--transition);
+    padding: 8px 20px !important;
+    border-radius: 20px;
+    border: 2px solid transparent;
+}
+
+footer a:hover {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color);
+    background-color: rgba(0, 119, 182, 0.05);
+}
+
+#page-content {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h1 {
+    color: var(--text-dark);
+    font-weight: 700;
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+p {
+    color: var(--text-gray);
+}
+
+img:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-lg) !important;
+}
+
+button, .btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+}
+
+button:hover, .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
