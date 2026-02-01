@@ -162,31 +162,36 @@ Le projet suit une architecture modulaire :
 
 ```mermaid
 graph TB
-    A[main.py] --> B[src/]
-    B --> C[pages/]
-    B --> D[components/]
-    B --> E[utils/]
+    A[UE-Projet-Multidisciplinaire-1] --> C[main.py]
+    A --> F[assets/]
+    A --> G[data/]
+    A --> H[src/]
     
-    C --> C1[home.py]
-    C --> C2[dataviz.py]
+    G --> G1[cleaned/]
+    G --> G2[raw/]
+    G1 --> G1A[cleaned_data.csv]
+    G2 --> G2A[raw_data.csv]
     
-    D --> D1[navbar.py]
-    D --> D2[footer.py]
-    D --> D3[filters.py]
-    D --> D4[viz_tabs.py]
-    D --> D5[site_modal.py]
-    D --> D6[tabs/]
+    H --> H1[components/]
+    H --> H2[pages/]
+    H --> H3[utils/]
     
-    D6 --> D6A[tab_map.py]
-    D6 --> D6B[tab_table.py]
-    D6 --> D6C[tab_graph.py]
+    H1 --> H1A[filters.py]
+    H1 --> H1B[footer.py]
+    H1 --> H1C[navbar.py]
+    H1 --> H1D[site_modal.py]
+    H1 --> H1E[viz_tabs.py]
+    H1 --> H1F[tabs/]
     
-    E --> E1[get_data.py]
-    E --> E2[clean_data.py]
+    H1F --> H1F1[tab_graph.py]
+    H1F --> H1F2[tab_map.py]
+    H1F --> H1F3[tab_table.py]
     
-    D6A --> E1
-    D6B --> E1
-    D6C --> E1
+    H2 --> H2A[dataviz.py]
+    H2 --> H2B[home.py]
+    
+    H3 --> H3A[clean_data.py]
+    H3 --> H3B[get_data.py]
 ```
 
 ### Structure des dossiers
@@ -197,7 +202,9 @@ UE-Projet-Multidisciplinaire-1/
 ├── main.py                          # Point d'entrée de l'application
 ├── README.md                        # Documentation
 ├── requirements.txt                 # Dépendances Python
-├── assets/                          # Images et fichiers statiques
+├── assets/                          # Images et fichiers css
+|   ├── style.css
+|   └── landing_image.png
 ├── data/
 │   ├── cleaned/                     # Données nettoyées
 │   │   └── cleaned_data.csv
