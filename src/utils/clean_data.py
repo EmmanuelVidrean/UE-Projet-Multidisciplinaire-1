@@ -70,6 +70,9 @@ def clean_data():
     if 'name_en' in df.columns:
         df['name_en'] = df['name_en'].apply(clean_html_text)
 
+    # Créer le dossier si nécessaire
+    os.makedirs(os.path.dirname(cleaned_path), exist_ok=True)
+
     # Sauvegarder les données nettoyées
     df.to_csv(cleaned_path, index=False)
 
